@@ -1,0 +1,21 @@
+#!/bin/bash
+
+pokemon_list=('Bulbasaur' 'Ivysaur' 'Venusaur' 'Charmander' 'Charmeleon')
+
+for pokemon in "${pokemon_list[@]}"; do
+    echo "Fetching data for $pokemon..."
+
+    API_URL="https://pokeapi.co/api/v2/pokemon/$pokemon"
+    OUTPUT_FILE="${pokemon}.json"
+    ERRORS_FILE="errors.txt"
+
+    response=$(curl -Ss --fail "$API_URL" -o "$OUTPUT_FILE" 2>>"$ERRORS_FILE")
+
+    if [ $? -ne 0 ]; then
+        echo "Failed to fetch data for $pokemon. Check $ERRORS_FILE for details."
+        continue
+    fi
+
+    echo "Saved data to $OUTPUT_FILE. ✅"
+    sleep 2
+done
