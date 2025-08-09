@@ -1,0 +1,41 @@
+#!/bin/bash
+
+pokemon_list=('bulbasaur' 'ivysaur' 'venusaur' 'charmander' 'charmeleon')
+pokemon_data_dir="pokemon_data"
+ERRORS_FILE="errors.txt"
+
+mkdir -p "$pokemon_data_dir"
+> "$ERRORS_FILE"
+
+fetch_pokemon() {
+    local pokemon=$1
+    local attempt=1
+    local success=false
+    local API_URL="https://pokeapi.co/api/v2/pokemon/$pokemon"
+    local OUTPUT_FILE="${pokemon_data_dir}/${pokemon}.json"
+    local MAX_RETRIES=3
+
+    while [ $attempt -le $MAX_RETRIES ]; do
+        error_message=$(curl -Ss --fail "$API_URL" -o "$OUTPUT_FILE" 2>&1)
+
+        if [ $? -eq 0 ]; then
+            echo "Saved data to $OUTPUT_FILE. ✅"
+            success=true
+            break
+        else
+            echo "Attempt $attempt for $pokemon failed. Retrying..."
+            sleep 2
+        fi
+
+        ((attempt++))
+    done
+
+    if [ "$success" = false ]; then
+        echo "[$pokemon] $error_message" >> "$ERRORS_FILE"
+    fi
+}
+
+export -f fetch_pokemon
+export pokemon_data_dir ERRORS_FILE
+
+parallel -j 3 fetch_pokemon ::: "${pokemon_list[@]}"
