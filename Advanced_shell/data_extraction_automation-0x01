@@ -1,0 +1,18 @@
+#!/bin/bash
+SOURCE_FILE="data.json"
+
+# Extract required data from JSON
+NAME=$(jq -r '.name' "$SOURCE_FILE")
+TYPE=$(jq -r '.types[0].type.name' "$SOURCE_FILE")
+HEIGHT=$(jq -r '.height' "$SOURCE_FILE")
+WEIGHT=$(jq -r '.weight' "$SOURCE_FILE")
+
+# Capitalize name and type
+NAME=$(echo "$NAME" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
+TYPE=$(echo "$TYPE" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
+
+# Convert height and weight to appropriate units
+HEIGHT=$(echo "$HEIGHT" | awk '{print $1/10}')m
+WEIGHT=$(echo "$WEIGHT" | awk '{print $1/10}')kg
+
+echo "$NAME is of type $TYPE, weighs $WEIGHT, and is $HEIGHT tall."
