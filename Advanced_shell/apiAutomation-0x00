@@ -1,0 +1,6 @@
+#!/bin/bash
+
+exec 2>>errors.txt
+
+curl -s https://pokeapi.co/pi/v2/pokemon/pikachu \
+    -o data.json
