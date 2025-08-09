@@ -12,13 +12,27 @@ for pokemon in "${pokemon_list[@]}"; do
     OUTPUT_FILE="${pokemon_data_dir}/${pokemon}.json"
     ERRORS_FILE="errors.txt"
 
-    response=$(curl -Ss --fail "$API_URL" -o "$OUTPUT_FILE" 2>>"$ERRORS_FILE")
+    attempt=1
+    success=false
 
-    if [ $? -ne 0 ]; then
-        echo "Failed to fetch data for $pokemon. Check $ERRORS_FILE for details."
-        continue
+    while [ $attempt -le 3 ]; do
+        error_message==$(curl -Ss --fail "$API_URL" -o "$OUTPUT_FILE" 2>&1)
+
+        if [ $? -eq 0 ]; then
+            echo "Saved data to $OUTPUT_FILE. ✅"
+            success=true
+            break
+        else
+            echo "Attempt $attempt for $pokemon failed. Retrying..."
+            sleep 2
+        fi
+
+        ((attempt++))
+    done
+
+    if [ "$success" = false ]; then
+        echo "[$pokemon] $error_message" >> "$ERRORS_FILE"
     fi
 
-    echo "Saved data to $OUTPUT_FILE. ✅"
-    sleep 2
+    sleep 2 # Wait before the next request
 done
