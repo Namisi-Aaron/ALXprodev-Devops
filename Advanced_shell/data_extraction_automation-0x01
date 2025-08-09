@@ -8,11 +8,11 @@ HEIGHT=$(jq -r '.height' "$SOURCE_FILE")
 WEIGHT=$(jq -r '.weight' "$SOURCE_FILE")
 
 # Capitalize name and type
-NAME=$(echo "$NAME" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
-TYPE=$(echo "$TYPE" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
+name=$(echo "$NAME" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
+type=$(echo "$TYPE" | awk '{print toupper(substr($0,1,1)) substr($0,2)}')
 
 # Convert height and weight to appropriate units
-HEIGHT=$(echo "$HEIGHT" | awk '{print $1/10}')m
-WEIGHT=$(echo "$WEIGHT" | awk '{print $1/10}')kg
+formatted_height=$(echo "$HEIGHT" | awk '{print $1/10}')
+formatted_weight=$(echo "$WEIGHT" | awk '{print $1/10}')
 
-echo "$NAME is of type $TYPE, weighs $WEIGHT, and is $HEIGHT tall."
+echo "$name is of type $type, weighs ${formatted_weight}kg, and is ${formatted_height}m tall."
