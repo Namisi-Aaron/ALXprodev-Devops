@@ -2,5 +2,5 @@
 
 exec 2>>errors.txt
 
-curl -s https://pokeapi.co/pi/v2/pokemon/pikachu \
+curl -s https://pokeapi.co/api/v2/pokemon/ \
     -o data.json
