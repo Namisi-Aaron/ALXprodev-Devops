@@ -1,12 +1,15 @@
 #!/bin/bash
 
-pokemon_list=('Bulbasaur' 'Ivysaur' 'Venusaur' 'Charmander' 'Charmeleon')
+pokemon_list=('bulbasaur' 'ivysaur' 'venusaur' 'charmander' 'charmeleon')
+pokemon_data_dir="pokemon_data"
+
+mkdir -p "$pokemon_data_dir"
 
 for pokemon in "${pokemon_list[@]}"; do
     echo "Fetching data for $pokemon..."
 
     API_URL="https://pokeapi.co/api/v2/pokemon/$pokemon"
-    OUTPUT_FILE="${pokemon}.json"
+    OUTPUT_FILE="${pokemon_data_dir}/${pokemon}.json"
     ERRORS_FILE="errors.txt"
 
     response=$(curl -Ss --fail "$API_URL" -o "$OUTPUT_FILE" 2>>"$ERRORS_FILE")
