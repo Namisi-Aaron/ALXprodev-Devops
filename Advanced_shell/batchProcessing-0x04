@@ -3,6 +3,7 @@
 pokemon_list=('bulbasaur' 'ivysaur' 'venusaur' 'charmander' 'charmeleon')
 pokemon_data_dir="pokemon_data"
 ERRORS_FILE="errors.txt"
+max_concurrent_jobs=3
 
 mkdir -p "$pokemon_data_dir"
 > "$ERRORS_FILE"
@@ -35,7 +36,15 @@ fetch_pokemon() {
     fi
 }
 
-export -f fetch_pokemon
-export pokemon_data_dir ERRORS_FILE
+running_jobs=0
+for pokemon in "${pokemon_list[@]}"; do
+    fetch_pokemon "$pokemon" &
+    ((running_jobs++))
 
-parallel -j 3 fetch_pokemon ::: "${pokemon_list[@]}"
+    if [ $running_jobs -ge $max_concurrent_jobs ]; then
+        wait -n
+        ((running_jobs--))
+    fi
+done
+
+wait
